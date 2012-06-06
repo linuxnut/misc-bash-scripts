@@ -1,0 +1,17 @@
+#!/bin/bash
+
+# Date: 04-13-2010
+# Created by Dave Crouse
+
+# Filename: encos
+# Usage: encos - ENCrypt On Screen
+# Notes: Interactive passphrase encryption program
+#        Reads input from text editor and encrypts to screen.
+# 1. Enter Comment for message
+# 2. Enter message.
+# 3. Enter password.
+
+read -p "Enter the name/comment for this message : " comment; vi passphraseencryption
+gpg --armor --comment "$comment" --no-options --output passphraseencryption.gpg --symmetric passphraseencryption
+shred -u passphraseencryption; cat passphraseencryption.gpg ;shred -u passphraseencryption.gpg; exit 0
+
