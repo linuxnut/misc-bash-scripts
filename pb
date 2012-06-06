@@ -1,5 +1,6 @@
 #!/bin/bash
-# Crouse's sqlite+bash phonebook application.
+# Crouse's sqlite+bash phonebook 
+# Shows how to use sqlite in a bash script.
 # 06-05-2012 crouse@usalug.net
 
 # Check if requirements are installed. 
