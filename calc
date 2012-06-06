@@ -1,0 +1,12 @@
+#!/bin/bash
+# Date: 03-18-2010
+# Created by Dave Crouse - crouse@usalug.net
+# Demostrates how you can use "bc" to perform math in the shell.
+
+# Filename: calc
+# Usage: calc 3*3*3
+# Notes: Perfoms addition/subtraction/multiplication/division
+#        from the command line, in decimal format.
+
+echo "scale=4; $1" | bc ;exit
+
