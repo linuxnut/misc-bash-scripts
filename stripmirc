@@ -1,0 +1,28 @@
+#!/bin/bash
+# stripmirc - strips fields from mirc copy/paste
+# crouse@usalug.net
+
+export TERM=xtermc
+timestamp=`date +%T`
+tempfile="/tmp/mirc.tempfile"
+touch ${tempfile}
+
+# TRAP  for the cleanup routine in case bad stuff happens.
+trap cleanup 1 2 3 6
+
+# Function for deleting files not needed, leaving just the logs.
+cleanup ()
+{
+  rm ${tempfile}
+}
+
+echo "Type CTRL D to end"
+cat > ${tempfile}
+new_entry=`cat ${tempfile}`
+
+echo "";echo "";echo "";
+cat ${tempfile} | cut -d" " -f 3-
+
+rm ${tempfile}
+exit 0
+
