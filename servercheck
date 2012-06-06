@@ -1,0 +1,111 @@
+#!/bin/bash
+# Bash Server Ping Checking -written by Dave Crouse
+# 09-24-2009 Crouse  crouse@usalug.net  http://usalug.com and http://bashscripts.org
+
+# Pretty simple, add servers/ip's/Ln (line numbers) in the format shown in the two column examples.
+# Tested with over 50 servers, worked for what I needed, thought i'd share :) ~~Crouse. 
+ 
+# Ideas  --- ad another array for Headers. so Hn could print headers with bold/etc. Might be neat.
+
+declare -a Sn # Server Name
+declare -a Ip # IP address of server.
+declare -a Ln # Line number to display on in Row1.
+declare -a Sn2 # Server Name                                                                                                       
+declare -a Ip2 # IP address of server.                                                                                             
+declare -a Ln2 # Line number to display on in Row2.
+############################################################################### Server List Row 1
+###############################################################################
+Sn[1]="usalug.com"
+Ip[1]="167.142.225.168"
+Ln[1]="6"
+ 
+Sn[2]="bashscripts.org"
+Ip[2]="167.142.225.168"
+Ln[2]="7"
+###############################################################################
+###############################################################################
+ 
+############################################################################### Server List Row 2
+###############################################################################
+Sn2[1]="archlinux.org"
+Ip2[1]="66.211.214.131"
+Ln2[1]="6"
+ 
+Sn2[2]="archlinux.me"
+Ip2[2]="167.142.225.168"
+Ln2[2]="7"
+################################################################################                                                   
+################################################################################                                                   
+tput civis # Hide the cursor
+maxcount=${#Sn[*]}  #should report number of Servers listed in Sn variable
+maxcount2=${#Sn2[*]}  #should report number of Servers listed in Sn2 varialbe
+clear
+#tput setf 2; #echo -e '\e[1;33m'
+echo " "
+tput setf 0;tput setb 2;
+echo "       Bash Server Ping Checking Utility           version 2.0         Crouse.   "; #tput rmso;
+ 
+tput setf 7;  tput setb 0; # List out servers now.
+     for (( loop=1; $loop < $maxcount+1; loop++ ))
+     do
+        ( tput cup ${Ln[$loop]} 10; echo "${Sn[$loop]}"; tput rc)
+     done
+     for (( loop2=1; $loop2 < $maxcount2+1; loop2++ ))
+     do
+        ( tput cup ${Ln2[$loop2]} 50; echo "${Sn2[$loop2]}"; tput rc)
+     done
+# Set traps so when we exit the big ass loop stuffs normal again.
+gracefulexit () {
+tput cnorm;
+tput setb 0;
+echo "Stopping Application"
+tput setf 2;
+exit
+}
+trap gracefulexit INT TERM EXIT
+# Begin big ass loop
+while true
+do
+    #First Row
+    for (( loop=1; $loop < $maxcount+1; loop++ ))
+    do
+        (tput sc ;tput setb 0; tput setf 0; tput cup 4 10 ; 
+        echo "........................................................................";tput rc)
+        (tput sc ;tput setb 0; tput setf 6; tput cup 4 10 ; 
+        echo "Checking ${Sn[$loop]} at IP: ${Ip[$loop]}" ; tput rc)
+        (tput sc ;tput setb 0; tput setf 0; tput cup ${Ln[$loop]} 1 ; echo "........." ; tput rc)
+        (tput sc ;tput setb 0; tput setf 6; tput cup ${Ln[$loop]} 1 ; echo "TESTING" ; tput rc)
+        count=$(ping -c 5 ${Ip[$loop]} | grep 'received' | awk -F',' '{ print $2 }' | awk '{ print $1 }')
+        (tput sc ;tput setb 0; tput setf 0; tput cup ${Ln[$loop]} 1 ; echo "........." ; tput rc)
+        if [[ "$count" == [45] ]]; then
+            (tput sc ;tput setf 0; tput setb 2;tput cup ${Ln[$loop]} 5 ; echo " OK " ; tput rc)
+        else
+            if [[ "$count" == [123] ]]; then
+                (tput sc ;tput setf 0; tput setb 6; tput cup ${Ln[$loop]} 4 ; echo "ALERT" ; tput rc)
+        else       
+                (tput sc ;tput setf 7; tput setb 4; tput cup ${Ln[$loop]} 2 ; echo "WARNING" ; tput rc)
+            fi
+        fi
+    done
+    #Second Row
+    for (( loop2=1; $loop2 < $maxcount2+1; loop2++ ))
+    do
+        (tput sc ;tput setb 0; tput setf 0; tput cup 4 10 ;
+        echo "........................................................................";tput rc)
+        (tput sc ;tput setb 0; tput setf 6; tput cup 4 10 ;
+        echo "Checking ${Sn2[$loop2]} at IP: ${Ip2[$loop2]}" ; tput rc)
+        (tput sc ;tput setb 0; tput setf 0; tput cup ${Ln2[$loop2]} 41 ; echo "........." ; tput rc)
+        (tput sc ;tput setb 0; tput setf 6; tput cup ${Ln2[$loop2]} 41 ; echo "TESTING" ; tput rc)
+        count2=$(ping -c 5 ${Ip2[$loop2]} | grep 'received' | awk -F',' '{ print $2 }' | awk '{ print $1 }')
+        (tput sc ;tput setb 0; tput setf 0; tput cup ${Ln2[$loop2]} 41 ; echo "........." ; tput rc)
+        if [[ "$count2" == [45] ]]; then
+            (tput sc ;tput setf 0; tput setb 2;tput cup ${Ln2[$loop2]} 45 ; echo " OK " ; tput rc)
+        else
+            if [[ "$count2" == [123] ]]; then
+                (tput sc ;tput setf 0; tput setb 6; tput cup ${Ln2[$loop2]} 44 ; echo "ALERT" ; tput rc)
+        else
+                (tput sc ;tput setf 7; tput setb 4; tput cup ${Ln2[$loop2]} 42 ; echo "WARNING" ; tput rc)
+            fi
+        fi
+    done
+done
